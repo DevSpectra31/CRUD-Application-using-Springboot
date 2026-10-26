@@ -1,3 +1,4 @@
+
 package com.example.Crud_using_Postgress.Entity;
 
 import jakarta.persistence.*;
@@ -7,15 +8,26 @@ import jakarta.persistence.*;
 public class Student {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+
     private String name;
     private int age;
     private String email;
     private int roll_no;
     private String subject;
+    private boolean isdeleted;
 
-    public long getId(Long id) {
-        return this.id;
+    public boolean isIsdeleted() {
+        return isdeleted;
+    }
+
+    public void setIsdeleted(boolean isdeleted) {
+        this.isdeleted = isdeleted;
+    }
+
+    public long getId() {
+        return id;
     }
 
     public void setId(long id) {

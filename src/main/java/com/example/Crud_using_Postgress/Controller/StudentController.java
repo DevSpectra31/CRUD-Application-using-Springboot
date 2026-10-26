@@ -11,7 +11,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/students")
 public class StudentController {
-    private StudentService studentService;
+    private  StudentService studentService;
 
     public StudentController(StudentService studentService){
         this.studentService=studentService;
@@ -32,7 +32,7 @@ public class StudentController {
         Student students = studentService.getStudent(id);
 
         if(students == null){
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(404).body(null);
         }
         return ResponseEntity
                 .ok(students);
@@ -69,4 +69,16 @@ public class StudentController {
 
         return  ResponseEntity.ok("student deleted successfully");
     }
+
+    @PatchMapping("soft-delete")
+    public ResponseEntity<String> DeleteStudentSoftly(@RequestParam Long id){
+        Boolean isdeleted = studentService.DeleteStudentSoftly(id);
+
+        if(!isdeleted){
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok("Student marked for deletion");
+    }
+
 }

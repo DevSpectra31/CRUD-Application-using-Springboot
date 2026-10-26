@@ -1,3 +1,4 @@
+
 package com.example.Crud_using_Postgress.Service;
 
 import com.example.Crud_using_Postgress.Entity.Student;
@@ -10,59 +11,75 @@ import java.util.Optional;
 @Service
 public class StudentService {
 
-    private StudentRespository studentRespository;
+    private final StudentRespository studentRespository;
 
-    public StudentService(StudentRespository studentRespository){
+    public StudentService(StudentRespository studentRespository) {
         this.studentRespository = studentRespository;
     }
 
-    public Student createStudent(Student studentreq){
-
-        System.out.println("student service called");
-
-        Student studenres = studentRespository.save(studentreq);
-
-        return studenres;
+    // Create Student
+    public Student createStudent(Student studentreq) {
+        studentreq.setIsdeleted(false);
+        return studentRespository.save(studentreq);
     }
 
-    public Student getStudent(Long id){
-
-        Optional<Student> studentres = Optional.of(studentRespository.getById(id));
-
-        return studentres.orElse(null);
+    // Get Student by ID
+    public Student getStudent(Long id) {
+        return studentRespository
+                .findByIdAndIsdeletedFalse(id)
+                .orElse(null);
     }
 
+    // Get All Active Students
     public List<Student> getallstudent() {
-
-        List<Student> students = studentRespository.findAll();
-
-        return students;
+        return studentRespository.findByIsdeletedFalse();
     }
 
-    public Student updateStudent(Long id,Student studentreq){
+    // Update Student
+    public Student updateStudent(Long id, Student studentreq) {
+        Optional<Student> existingstudent =
+                studentRespository.findByIdAndIsdeletedFalse(id);
 
-        Optional<Student> existingstudent = studentRespository.findById(id);
-
-        if(existingstudent.isEmpty()){
+        if (existingstudent.isEmpty()) {
             return null;
         }
-       Student StudentTosave = existingstudent.get();
 
-        StudentTosave.setName(studentreq.getName());
-        StudentTosave.setEmail(studentreq.getEmail());
-        StudentTosave.setAge(studentreq.getAge());
-        StudentTosave.setRoll_no(studentreq.getRoll_no());
-        StudentTosave.setSubject(studentreq.getSubject());
+        Student studentToSave = existingstudent.get();
 
-       return  studentRespository.save(StudentTosave);
+        studentToSave.setName(studentreq.getName());
+        studentToSave.setEmail(studentreq.getEmail());
+        studentToSave.setAge(studentreq.getAge());
+        studentToSave.setRoll_no(studentreq.getRoll_no());
+        studentToSave.setSubject(studentreq.getSubject());
+
+        return studentRespository.save(studentToSave);
     }
 
-    public Boolean deletestudent(Long id){
+    // Hard Delete Student
+    public Boolean deletestudent(Long id) {
+        Optional<Student> student = studentRespository.findById(id);
 
-        Boolean isstudent = studentRespository.existsById(id);
-        if(!isstudent) return false;
+        if (student.isEmpty()) {
+            return false;
+        }
 
-        studentRespository.deleteById(id);
+        studentRespository.delete(student.get());
+        return true;
+    }
+
+    // Soft Delete Student
+    public Boolean DeleteStudentSoftly(Long id) {
+        Optional<Student> existingstudent =
+                studentRespository.findByIdAndIsdeletedFalse(id);
+
+        if (existingstudent.isEmpty()) {
+            return false;
+        }
+
+        Student studentToSave = existingstudent.get();
+        studentToSave.setIsdeleted(true);
+
+        studentRespository.save(studentToSave);
 
         return true;
     }
