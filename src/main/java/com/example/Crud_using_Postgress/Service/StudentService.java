@@ -83,4 +83,11 @@ public class StudentService {
 
         return true;
     }
+
+    //all-delete-record
+    public Student deleteallrecord(){
+         studentRespository.deleteAll();
+
+        return null;
+    }
 }

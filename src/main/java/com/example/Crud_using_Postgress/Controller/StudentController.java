@@ -70,6 +70,13 @@ public class StudentController {
         return  ResponseEntity.ok("student deleted successfully");
     }
 
+    @DeleteMapping("/delete-all")
+    public ResponseEntity<String> deleteallrecord(){
+        Student alldeleted = studentService.deleteallrecord();
+
+        return ResponseEntity.ok("All record deleted successfully");
+    }
+
     @PatchMapping("soft-delete")
     public ResponseEntity<String> DeleteStudentSoftly(@RequestParam Long id){
         Boolean isdeleted = studentService.DeleteStudentSoftly(id);
