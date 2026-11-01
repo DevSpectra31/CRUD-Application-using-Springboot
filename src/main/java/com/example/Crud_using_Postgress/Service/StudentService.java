@@ -1,10 +1,15 @@
 
 package com.example.Crud_using_Postgress.Service;
 
+import com.example.Crud_using_Postgress.DTO.CreateStudentRequestDTO;
+import com.example.Crud_using_Postgress.DTO.CreateStudentResponseDTo;
+import com.example.Crud_using_Postgress.DTO.UpdateRequestDto;
+import com.example.Crud_using_Postgress.DTO.UpdateResponseDto;
 import com.example.Crud_using_Postgress.Entity.Student;
 import com.example.Crud_using_Postgress.Respository.StudentRespository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,11 +21,13 @@ public class StudentService {
     public StudentService(StudentRespository studentRespository) {
         this.studentRespository = studentRespository;
     }
+    public CreateStudentResponseDTo createStudent(CreateStudentRequestDTO createStudentRequestDTO) {
 
-    // Create Student
-    public Student createStudent(Student studentreq) {
-        studentreq.setIsdeleted(false);
-        return studentRespository.save(studentreq);
+        Student student = mapToEntity(createStudentRequestDTO);
+
+        Student savedStudent = studentRespository.save(student);
+
+        return mapToResEntity(savedStudent);
     }
 
     // Get Student by ID
@@ -36,7 +43,7 @@ public class StudentService {
     }
 
     // Update Student
-    public Student updateStudent(Long id, Student studentreq) {
+    public UpdateResponseDto updateStudent(Long id, UpdateRequestDto updateRequestDto) {
         Optional<Student> existingstudent =
                 studentRespository.findByIdAndIsdeletedFalse(id);
 
@@ -46,13 +53,13 @@ public class StudentService {
 
         Student studentToSave = existingstudent.get();
 
-        studentToSave.setName(studentreq.getName());
-        studentToSave.setEmail(studentreq.getEmail());
-        studentToSave.setAge(studentreq.getAge());
-        studentToSave.setRoll_no(studentreq.getRoll_no());
-        studentToSave.setSubject(studentreq.getSubject());
+        studentToSave.setName(updateRequestDto.getName());
+        studentToSave.setAge(updateRequestDto.getAge());
+        studentToSave.setRoll_no(updateRequestDto.getRoll_no());
+        studentToSave.setSubject(updateRequestDto.getSubject());
 
-        return studentRespository.save(studentToSave);
+        Student student = studentRespository.save(studentToSave);
+        return mapToEntityUpdate(student);
     }
 
     // Hard Delete Student
@@ -85,9 +92,51 @@ public class StudentService {
     }
 
     //all-delete-record
-    public Student deleteallrecord(){
+    public Student deleteriously(){
          studentRespository.deleteAll();
 
         return null;
+    }
+
+    private Student mapToEntity(CreateStudentRequestDTO createStudentRequestDTO) {
+        Student student = new Student();
+        student.setName(createStudentRequestDTO.getName());
+        student.setEmail(createStudentRequestDTO.getEmail());
+        student.setAge(createStudentRequestDTO.getAge());
+        student.setRoll_no(createStudentRequestDTO.getRoll_no());
+        student.setSubject(createStudentRequestDTO.getSubject());
+
+        student.setIsdeleted(false);
+        student.setCreatedAt(LocalDateTime.now());
+        student.setUpdatedAt(LocalDateTime.now());
+
+        return  student;
+    }
+
+    private CreateStudentResponseDTo mapToResEntity(Student student) {
+        CreateStudentResponseDTo createStudentResponseDTo = new CreateStudentResponseDTo();
+        createStudentResponseDTo.setName(student.getName());
+        createStudentResponseDTo.setEmail(student.getEmail());
+        createStudentResponseDTo.setAge(student.getAge());
+        createStudentResponseDTo.setRoll_no(student.getRoll_no());
+        createStudentResponseDTo.setSubject(student.getSubject());
+        createStudentResponseDTo.setMessage("student created successfully");
+        createStudentResponseDTo.setUpdatedAt(student.getUpdatedAt());
+        createStudentResponseDTo.setCreatedAt(student.getCreatedAt());
+
+        return createStudentResponseDTo;
+    }
+
+    private UpdateResponseDto mapToEntityUpdate(Student student){
+        UpdateResponseDto updateResponseDto = new UpdateResponseDto();
+
+        updateResponseDto.setName(student.getName());
+        updateResponseDto.setAge(student.getAge());
+        updateResponseDto.setRoll_no(student.getRoll_no());
+        updateResponseDto.setSubject((student.getSubject()));
+        updateResponseDto.setupdatedAt(LocalDateTime.now());
+        updateResponseDto.setMessage("user updated sucessfully");
+
+        return updateResponseDto;
     }
 }

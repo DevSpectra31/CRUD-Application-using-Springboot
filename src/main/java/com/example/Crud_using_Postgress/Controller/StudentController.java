@@ -1,11 +1,17 @@
 package com.example.Crud_using_Postgress.Controller;
 
+import com.example.Crud_using_Postgress.DTO.CreateStudentRequestDTO;
+import com.example.Crud_using_Postgress.DTO.CreateStudentResponseDTo;
+import com.example.Crud_using_Postgress.DTO.UpdateRequestDto;
+import com.example.Crud_using_Postgress.DTO.UpdateResponseDto;
 import com.example.Crud_using_Postgress.Entity.Student;
 import com.example.Crud_using_Postgress.Service.StudentService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -17,9 +23,9 @@ public class StudentController {
         this.studentService=studentService;
     }
     @PostMapping("/create")
-    public ResponseEntity<Student> CreateStudent(@RequestBody Student student){
+    public ResponseEntity<CreateStudentResponseDTo> CreateStudent( @Valid @RequestBody CreateStudentRequestDTO createStudentRequestDTO){
 
-        Student createdstudent = studentService.createStudent(student);
+        CreateStudentResponseDTo createdstudent = studentService.createStudent(createStudentRequestDTO);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -39,7 +45,7 @@ public class StudentController {
     }
 
     @GetMapping("/getall")
-    public ResponseEntity<List<Student>> getAllStudent(){
+    public  ResponseEntity<List<Student>> getAllStudent(){
         List<Student> students = studentService.getallstudent();
         if(students == null){
             return ResponseEntity.notFound().build();
@@ -49,9 +55,9 @@ public class StudentController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Student> updateStudent(@RequestParam Long id, @RequestBody Student studentreq){
+    public ResponseEntity<UpdateResponseDto> updateStudent(@RequestParam Long id, @RequestBody UpdateRequestDto studentreq){
 
-        Student updatedstudent = studentService.updateStudent(id,studentreq);
+        UpdateResponseDto updatedstudent = studentService.updateStudent(id,studentreq);
         if(updatedstudent == null){
             return ResponseEntity.notFound().build();
         }
@@ -72,7 +78,7 @@ public class StudentController {
 
     @DeleteMapping("/delete-all")
     public ResponseEntity<String> deleteallrecord(){
-        Student alldeleted = studentService.deleteallrecord();
+        Student alldeleted = studentService.deleteriously();
 
         return ResponseEntity.ok("All record deleted successfully");
     }
