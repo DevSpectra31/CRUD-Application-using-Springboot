@@ -1,23 +1,23 @@
 package com.example.Crud_using_Postgress.DTO;
 
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 
 import java.time.LocalDateTime;
 
 public class CreateStudentRequestDTO {
 
-    @NotBlank
+
+    @NotBlank(message = "name is required")
+    @Size(min = 2 , max = 50 , message = "name should be 2 t0 50 characters long")
     private String name;
     @Min(value = 18)
-    @NotBlank
     private int age;
-    @NotBlank
+
+    @Email(message = "must be valid email")
     private String email;
-    @NotNull
+    @NotNull(message = "roll no is required")
     private int roll_no;
+    @NotBlank(message = "subject is required")
     private String subject;
     private LocalDateTime  createdAt;
     private LocalDateTime updatedAt;

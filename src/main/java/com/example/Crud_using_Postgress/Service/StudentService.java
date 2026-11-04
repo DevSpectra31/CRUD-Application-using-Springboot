@@ -10,6 +10,7 @@ import com.example.Crud_using_Postgress.Respository.StudentRespository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,15 +32,21 @@ public class StudentService {
     }
 
     // Get Student by ID
-    public Student getStudent(Long id) {
-        return studentRespository
-                .findByIdAndIsdeletedFalse(id)
-                .orElse(null);
+    public CreateStudentResponseDTo getStudent(Long id) {
+
+        Student student1 = studentRespository.getReferenceById(id);
+
+        return mapToResEntity(student1);
     }
 
     // Get All Active Students
-    public List<Student> getallstudent() {
-        return studentRespository.findByIsdeletedFalse();
+    public List<CreateStudentResponseDTo> getallstudent() {
+
+        List<Student> students = studentRespository.findAll();
+
+        return students.stream()
+                .map(this::mapToResEntity)
+                .toList();
     }
 
     // Update Student
@@ -57,6 +64,7 @@ public class StudentService {
         studentToSave.setAge(updateRequestDto.getAge());
         studentToSave.setRoll_no(updateRequestDto.getRoll_no());
         studentToSave.setSubject(updateRequestDto.getSubject());
+        studentToSave.setUpdatedAt(LocalDateTime.now());
 
         Student student = studentRespository.save(studentToSave);
         return mapToEntityUpdate(student);
@@ -127,6 +135,7 @@ public class StudentService {
         return createStudentResponseDTo;
     }
 
+
     private UpdateResponseDto mapToEntityUpdate(Student student){
         UpdateResponseDto updateResponseDto = new UpdateResponseDto();
 
@@ -134,7 +143,7 @@ public class StudentService {
         updateResponseDto.setAge(student.getAge());
         updateResponseDto.setRoll_no(student.getRoll_no());
         updateResponseDto.setSubject((student.getSubject()));
-        updateResponseDto.setupdatedAt(LocalDateTime.now());
+        updateResponseDto.setUpdatedAt(student.getUpdatedAt());
         updateResponseDto.setMessage("user updated sucessfully");
 
         return updateResponseDto;

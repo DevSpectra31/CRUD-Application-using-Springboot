@@ -11,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -34,8 +33,8 @@ public class StudentController {
     }
 
     @GetMapping("/get")
-    public ResponseEntity<Student> getStudent(@RequestParam Long id){
-        Student students = studentService.getStudent(id);
+    public ResponseEntity<CreateStudentResponseDTo> getStudent(@RequestParam Long id){
+        CreateStudentResponseDTo students = studentService.getStudent(id);
 
         if(students == null){
             return ResponseEntity.status(404).body(null);
@@ -45,9 +44,9 @@ public class StudentController {
     }
 
     @GetMapping("/getall")
-    public  ResponseEntity<List<Student>> getAllStudent(){
-        List<Student> students = studentService.getallstudent();
-        if(students == null){
+    public  ResponseEntity<List<CreateStudentResponseDTo>> getAllStudent(){
+        List<CreateStudentResponseDTo> students = studentService.getallstudent();
+        if(students.isEmpty()){
             return ResponseEntity.notFound().build();
         }
 

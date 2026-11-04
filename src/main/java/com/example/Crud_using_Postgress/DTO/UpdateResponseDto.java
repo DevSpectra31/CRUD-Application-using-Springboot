@@ -9,15 +9,7 @@ public class UpdateResponseDto {
     private int roll_no;
     private String subject;
     private LocalDateTime updatedAt;
-    private  String message ;
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
+    private  String  message;
 
     public String getName() {
         return name;
@@ -51,11 +43,19 @@ public class UpdateResponseDto {
         this.subject = subject;
     }
 
-    public LocalDateTime getupdatedAt() {
+    public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setupdatedAt(LocalDateTime updatedAt) {
+    public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 }
