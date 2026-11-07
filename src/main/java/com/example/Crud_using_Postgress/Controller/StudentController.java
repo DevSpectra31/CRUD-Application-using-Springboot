@@ -1,10 +1,6 @@
 package com.example.Crud_using_Postgress.Controller;
 
-import com.example.Crud_using_Postgress.DTO.CreateStudentRequestDTO;
-import com.example.Crud_using_Postgress.DTO.CreateStudentResponseDTo;
-import com.example.Crud_using_Postgress.DTO.UpdateRequestDto;
-import com.example.Crud_using_Postgress.DTO.UpdateResponseDto;
-import com.example.Crud_using_Postgress.Entity.Student;
+import com.example.Crud_using_Postgress.DTO.*;
 import com.example.Crud_using_Postgress.Service.StudentService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -16,13 +12,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/students")
 public class StudentController {
-    private  StudentService studentService;
+    private final StudentService studentService;
 
     public StudentController(StudentService studentService){
         this.studentService=studentService;
     }
-    @PostMapping("/create")
-    public ResponseEntity<CreateStudentResponseDTo> CreateStudent( @Valid @RequestBody CreateStudentRequestDTO createStudentRequestDTO){
+    @PostMapping
+    public ResponseEntity<CreateStudentResponseDTo> CreateStudent(@Valid @RequestBody CreateStudentRequestDTO createStudentRequestDTO){
 
         CreateStudentResponseDTo createdstudent = studentService.createStudent(createStudentRequestDTO);
 
@@ -32,8 +28,8 @@ public class StudentController {
 
     }
 
-    @GetMapping("/get")
-    public ResponseEntity<CreateStudentResponseDTo> getStudent(@RequestParam Long id){
+    @GetMapping("{id}")
+    public ResponseEntity<CreateStudentResponseDTo> getStudent(@PathVariable Long id){
         CreateStudentResponseDTo students = studentService.getStudent(id);
 
         if(students == null){
@@ -43,7 +39,7 @@ public class StudentController {
                 .ok(students);
     }
 
-    @GetMapping("/getall")
+    @GetMapping
     public  ResponseEntity<List<CreateStudentResponseDTo>> getAllStudent(){
         List<CreateStudentResponseDTo> students = studentService.getallstudent();
         if(students.isEmpty()){
@@ -65,32 +61,23 @@ public class StudentController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteStudent(@RequestParam Long id){
-        Boolean isdeleted = studentService.deletestudent(id);
+    public ResponseEntity<CreateStudentResponseDTo> deleteStudent(@RequestParam Long id){
 
-        if(!isdeleted){
-            return ResponseEntity.notFound().build();
-        }
-
-        return  ResponseEntity.ok("student deleted successfully");
+        studentService.deletestudent(id);
+        return  ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping("/delete-all")
-    public ResponseEntity<String> deleteallrecord(){
-        Student alldeleted = studentService.deleteriously();
-
-        return ResponseEntity.ok("All record deleted successfully");
-    }
+//    @DeleteMapping("/delete-all")
+//    public ResponseEntity<String> deleteallrecord(){
+//        Student alldeleted = studentService.deleteriously();
+//
+//        return ResponseEntity.ok("All record deleted successfully");
+//    }
 
     @PatchMapping("soft-delete")
     public ResponseEntity<String> DeleteStudentSoftly(@RequestParam Long id){
-        Boolean isdeleted = studentService.DeleteStudentSoftly(id);
-
-        if(!isdeleted){
-            return ResponseEntity.notFound().build();
-        }
-
-        return ResponseEntity.ok("Student marked for deletion");
+        studentService.DeleteStudentSoftly(id);
+        return  ResponseEntity.ok("user marked for deleted");
     }
 
 }
